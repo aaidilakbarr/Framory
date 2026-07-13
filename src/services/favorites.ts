@@ -13,7 +13,10 @@ export async function setFavorite({ photoId, isFavorite }: SetFavoriteInput) {
   if (isFavorite) {
     const { error } = await supabase
       .from("favorites")
-      .upsert({ user_id: userId, photo_id: photoId }, { onConflict: "user_id,photo_id" });
+      .upsert(
+        { user_id: userId, photo_id: photoId },
+        { onConflict: "user_id,photo_id", ignoreDuplicates: true },
+      );
     if (error) throw toAppError(error, "Could not favorite the memory.");
   } else {
     const { error } = await supabase
@@ -27,4 +30,8 @@ export async function setFavorite({ photoId, isFavorite }: SetFavoriteInput) {
   return { photoId, isFavorite };
 }
 
-export const toggleFavorite = setFavorite;
+export async function toggleFavorite({ photoId, isFavorite }: SetFavoriteInput) {
+  const actual = !isFavorite;
+  await setFavorite({ photoId, isFavorite: actual });
+  return { photoId, isFavorite: actual };
+}

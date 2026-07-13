@@ -74,5 +74,7 @@ export async function invalidateMemoryQueries() {
     queryClient.invalidateQueries({ queryKey: queryKeys.albums.all() }),
     queryClient.invalidateQueries({ queryKey: queryKeys.favorites.all() }),
     queryClient.invalidateQueries({ queryKey: queryKeys.profile.stats() }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.tags.all() }),
+    queryClient.removeQueries({ queryKey: [...queryKeys.all, "search"] }),
   ]);
 }

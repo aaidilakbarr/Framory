@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Link, type Href } from 'expo-router';
+import { Link } from 'expo-router';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { AuthShell } from '@/components/auth-shell';
@@ -88,7 +88,7 @@ export default function SignInScreen() {
       title="Welcome back to your memories."
       description="Pick up where you left off. Your photo strips stay personal, organized, and ready to revisit."
       footer={
-        <Link href={'/(auth)/sign-up' as Href} asChild>
+        <Link href="/(auth)/sign-up" asChild>
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Create a StampCut account"

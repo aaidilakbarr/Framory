@@ -1,18 +1,48 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { useColorScheme } from "react-native";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { queryClient } from "@/lib/query-client";
+import { useAuthStore } from "@/store/auth-store";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
+function useHydratedAuth() {
+  const [hydrated, setHydrated] = useState(false);
+  const initialize = useAuthStore((s) => s.initialize);
+  const isInitializing = useAuthStore((s) => s.isInitializing);
+
+  useEffect(() => {
+    if (!hydrated) {
+      initialize().finally(() => setHydrated(true));
+    }
+  }, [initialize, hydrated]);
+
+  return { isInitializing: isInitializing || !hydrated };
+}
+
+export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { isInitializing } = useHydratedAuth();
+
+  useEffect(() => {
+    if (!isInitializing) {
+      SplashScreen.hideAsync();
+    }
+  }, [isInitializing]);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(app)" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </QueryClientProvider>
   );
 }

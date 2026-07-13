@@ -13,23 +13,23 @@ export const signUpSchema = signInSchema.extend({
 });
 
 export const albumSchema = z.object({
-  name: trimmedText.min(1, "Album name is required.").max(80),
+  name: trimmedText.min(1, "Album name is required.").max(100),
 });
 
 export const photoMetadataSchema = z.object({
-  caption: trimmedText.max(500).default(""),
+  caption: trimmedText.max(2000).default(""),
   capturedAt: z.coerce.date(),
   albumId: z.string().uuid().nullable().optional(),
-  tags: z.array(trimmedText.min(1).max(40)).max(20).default([]),
+  tags: z.array(trimmedText.min(1).max(50)).max(20).default([]),
 });
 
 export const profileSchema = z.object({
-  username: trimmedText.min(2).max(40),
+  username: trimmedText.min(1).max(50),
   avatarUrl: z.string().trim().url().nullable().optional(),
 });
 
 export const tagSchema = z.object({
-  name: trimmedText.min(1).max(40),
+  name: trimmedText.min(1).max(50),
 });
 
 export const searchSchema = z.object({
